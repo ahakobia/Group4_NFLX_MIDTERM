@@ -1,8 +1,17 @@
 
-from query_total_energy import query_data
+from total_energy import import_data
 from tran_total_energy import transform_data
+from query_total_energy import query_data
 
-def test_transform_data():
+def test_data_columns_count():
+    df = import_data()
+    assert len(df.columns) == 7
+
+def test_data_row_count():
+    df = import_data()
+    assert len(df.index) == 496774
+    
+def test_transform_data_columns_count():
     df = transform_data()
     assert len(df.columns) == 6
 

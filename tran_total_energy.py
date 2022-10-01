@@ -1,11 +1,11 @@
 
+from total_energy import import_data
+
 import pandas as pd
 
 def transform_data():
-    csv_file = "Resources/organised_Gen.csv"
-    energy = pd.read_csv(csv_file)
     
-    tf_energy_data = energy.drop(columns=['Unnamed: 0'])
+    tf_energy_data = import_data().drop(columns=['Unnamed: 0'])
     
     tf_energy_data = tf_energy_data.rename(columns={
         "YEAR": "year", 

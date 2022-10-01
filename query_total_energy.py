@@ -1,9 +1,9 @@
 
 from tran_total_energy import transform_data
 import sys
-# import the connect library for psycopg2
+
 import psycopg2
-# import the error handling libraries for psycopg2
+
 from psycopg2 import OperationalError, errorcodes, errors
 import psycopg2.extras as extras
 import pandas as pd
@@ -93,6 +93,7 @@ def copy_from_dataFile_StringIO(conn, datafrm, table):
         cursor.close()
 
 conn = connect(params_dic)
+
 # We set autocommit=True so every command we execute will produce results immediately.
 conn.autocommit = True
 cursor = conn.cursor()
@@ -102,7 +103,7 @@ copy_from_dataFile_StringIO(conn, edf, 'energy')
 
 
 def query_data():
-    #start = timer()
+    start = timer()
 
     conn.autocommit = True
     cursor = conn.cursor()
@@ -114,6 +115,7 @@ def query_data():
                 AND state = 'US-TOTAL'
                 AND YEAR != 2022
             Group By YEAR, State
+            Order By YEAR DESC
                 ;''' 
   
     cursor.execute(sql)
@@ -121,7 +123,8 @@ def query_data():
     df = pd.DataFrame (results, columns = ['Year', 'Total Generated(in millions)'])
     #fig = px.bar(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
     conn.commit()
-    #end = timer()
-    #k = end - start 
-    #print(k)
-    return df#fig.show()
+    end = timer()
+    k = end - start 
+    #print("Query execution time: {}s".format(k))
+    #fig.show()
+    return df
