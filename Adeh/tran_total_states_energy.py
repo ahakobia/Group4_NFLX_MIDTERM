@@ -1,5 +1,5 @@
 
-from total_energy import import_data
+from total_states_energy import import_data
 
 import pandas as pd
 
@@ -17,8 +17,11 @@ def transform_data():
 
 
     tf_energy_data['producer'] = tf_energy_data['producer'].apply(lambda x: x.replace(',','/'))
-    tf_energy_data = tf_energy_data[tf_energy_data.state == 'US-TOTAL']
+    tf_energy_data = tf_energy_data[tf_energy_data.state != 'US-TOTAL']
     tf_energy_data = tf_energy_data[tf_energy_data.producer == 'Total Electric Power Industry']
     tf_energy_data = tf_energy_data[tf_energy_data.source == 'Total']
+    
+    tf_energy_data = tf_energy_data.drop(columns=['producer'])
+    tf_energy_data = tf_energy_data.drop(columns=['source'])
     
     return tf_energy_data.reset_index(drop = True)
