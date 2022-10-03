@@ -121,10 +121,10 @@ def query_data():
     cursor.execute(sql)
     results = cursor.fetchall()
     df = pd.DataFrame (results, columns = ['Year', 'Total Generated(in millions)'])
-    #fig = px.bar(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
+    fig = px.bar(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
     conn.commit()
     end = timer()
     k = end - start 
-    #print("Query execution time: {}s".format(k))
-    #fig.show()
+    print("Query execution time: {}s".format(k))
+    fig.show()
     return df
