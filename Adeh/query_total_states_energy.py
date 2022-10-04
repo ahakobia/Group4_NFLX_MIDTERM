@@ -115,11 +115,16 @@ def query_data():
   
     cursor.execute(sql)
     results = cursor.fetchall()
+<<<<<<< HEAD:query_total_energy.py
+    df = pd.DataFrame (results, columns = ['Year', 'Total Generated(in millions)'])
+    fig = px.bar(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
+=======
     df = pd.DataFrame (results, columns = ['Year', 'State', 'Total Generated(in millions)'])
     #fig = px.bar(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
+>>>>>>> 5d621a7c381c5590fa516a8eba226741fe30231d:Adeh/query_total_states_energy.py
     conn.commit()
     end = timer()
     k = end - start 
-    #print("Query execution time: {}s".format(k))
-    #fig.show()
+    print("Query execution time: {}s".format(k))
+    fig.show()
     return df
