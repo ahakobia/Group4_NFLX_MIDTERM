@@ -1,12 +1,12 @@
 
 from tran_total_energy import transform_data
 import sys
+import pandas as pd
 
 import psycopg2
 
 from psycopg2 import OperationalError, errorcodes, errors
 import psycopg2.extras as extras
-import pandas as pd
 from io import StringIO
 import numpy as np
 
@@ -57,8 +57,8 @@ def show_psycopg2_exception(err):
 def create_table(cursor):
     try:
         # 
-        cursor.execute("DROP TABLE IF EXISTS energy_type;")
-        sql = '''CREATE TABLE energy_type(
+        cursor.execute("DROP TABLE IF EXISTS energy_over_time;")
+        sql = '''CREATE TABLE energy_over_time(
         year INT NOT NULL,
         month INT NOT NULL,
         state VARCHAR NOT NULL, 
@@ -99,7 +99,7 @@ conn.autocommit = True
 cursor = conn.cursor()
 create_table(cursor)
 
-copy_from_dataFile_StringIO(conn, edf, 'energy_type')
+copy_from_dataFile_StringIO(conn, edf, 'energy_over_time')
 
 
 def query_data():
@@ -108,16 +108,16 @@ def query_data():
     conn.autocommit = True
     cursor = conn.cursor()
   
-    sql = '''SELECT state, source, SUM(generated)
-            FROM energy_type 
-            WHERE YEAR != 2022
-            Group By state, source
-            Order By state
-                ;''' 
+    sql = '''SELECT year, source, SUM(generated)
+                FROM energy_over_time 
+                WHERE year != 2022
+                GROUP By year, source
+                ORDER By year
+                ''' 
   
     cursor.execute(sql)
     results = cursor.fetchall()
-    df = pd.DataFrame (results, columns = ['State', 'Energy Source','Total Generated'])
+    df = pd.DataFrame (results, columns = ['Year', 'Energy Source','Total Generated'])
     conn.commit()
     end = timer()
     k = end - start 

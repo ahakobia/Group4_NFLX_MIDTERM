@@ -25,4 +25,4 @@ def test_query_data_column_count():
 
 def test_query_data_row_count():
     df = query_data()
-    assert len(df.index) == 323
+    assert len(df.index) == 147
