@@ -115,9 +115,6 @@ def query_data():
                         OR source='Hydroelectric Conventional' OR source='Geothermal' 
                         OR source='Wood and Wood Derived Fuels' OR source='Other Biomass' 
                         OR source='Pumped Storage')
-                    AND (state != 'US-TOTAL' 
-                        AND producer != 'Total Electric Power Industry' 
-                        AND source != 'Total')
                 GROUP BY year, producer
                 ORDER BY year ASC, producer DESC;
                 ;''' 
