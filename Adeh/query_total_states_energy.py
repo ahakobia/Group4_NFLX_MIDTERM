@@ -10,7 +10,6 @@ import pandas as pd
 from io import StringIO
 import numpy as np
 
-import plotly.express as px
 from timeit import default_timer as timer
 
 edf = transform_data()
@@ -105,17 +104,15 @@ def query_data():
     conn.autocommit = True
     cursor = conn.cursor()
   
-    sql = '''SELECT year, month, state, (SUM(generated)) as sums
+    sql = '''SELECT year, state, (SUM(generated)) as sums
             FROM energy 
             WHERE YEAR != 2022
-            Group By YEAR, state, month
-            Order By YEAR ASC, month ASC, sums DESC
+            Group By YEAR, state
+            Order By YEAR ASC, sums DESC
                 ;''' 
   
     cursor.execute(sql)
     results = cursor.fetchall()
-    df = pd.DataFrame (results, columns = ['Year', 'Month', 'State','Total Generated(MWh)'])
-    #fig = px.bar(df, x="Year", y="Total Generated(in millions)", color = "State", title="TOTAL Energy Generated Each Year")
+    df = pd.DataFrame (results, columns = ['Year', 'State','Total Generated(MWh)'])
     conn.commit()
-    #fig.show()
     return df

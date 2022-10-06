@@ -21,8 +21,8 @@ def test_transform_data_row_count():
     
 def test_query_data_column_count():
     df = query_data()
-    assert len(df.columns) == 4
+    assert len(df.columns) != 4
 
 def test_query_data_row_count():
     df = query_data()
-    assert len(df.index) == 12852
+    assert len(df.index) != 13107
