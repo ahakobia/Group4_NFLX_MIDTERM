@@ -1,5 +1,5 @@
 
-from tran_total_states_energy import transform_data
+from transformed_total_energy import transform_data
 import sys
 
 import psycopg2
@@ -10,6 +10,7 @@ import pandas as pd
 from io import StringIO
 import numpy as np
 
+import plotly.express as px
 from timeit import default_timer as timer
 
 edf = transform_data()
@@ -60,8 +61,10 @@ def create_table(cursor):
         sql = '''CREATE TABLE energy(
         year INT NOT NULL, 
         month INT NOT NULL, 
-        state VARCHAR NOT NULL, 
-        generated FLOAT NOT NULL
+        state VARCHAR(8) NOT NULL,
+        producer VARCHAR(50) NOT NULL,
+        source VARCHAR(50) NOT NULL,
+        energy FLOAT NOT NULL    
         )'''
         # Creating a table
         cursor.execute(sql);
@@ -100,19 +103,30 @@ copy_from_dataFile_StringIO(conn, edf, 'energy')
 
 
 def query_data():
+    start = timer()
 
     conn.autocommit = True
     cursor = conn.cursor()
   
-    sql = '''SELECT year, state, (SUM(generated)) as sums
-            FROM energy 
-            WHERE YEAR != 2022
-            Group By YEAR, state
-            Order By YEAR ASC, sums DESC
+    sql = '''SELECT year, producer, SUM(energy) AS total_generated 
+                FROM energy
+                WHERE year >= 2001 AND year < 2022 
+                    AND (source='Wind' OR source='Solar Thermal and Photovoltaic' 
+                        OR source='Hydroelectric Conventional' OR source='Geothermal' 
+                        OR source='Wood and Wood Derived Fuels' OR source='Other Biomass' 
+                        OR source='Pumped Storage')
+                    AND (state != 'US-TOTAL' 
+                        AND producer != 'Total Electric Power Industry' 
+                        AND source != 'Total')
+                GROUP BY year, producer
+                ORDER BY year ASC, producer DESC;
                 ;''' 
   
     cursor.execute(sql)
     results = cursor.fetchall()
-    df = pd.DataFrame (results, columns = ['Year', 'State','Total Generated(MWh)'])
+    df = pd.DataFrame (results, columns = ['Year', 'Producer', 'Total Generated(MWh)'])
     conn.commit()
+    end = timer()
+    k = end - start 
+    
     return df
