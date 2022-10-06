@@ -1,5 +1,5 @@
 
-from tran_total_energy import transform_data
+from tran_total_states_energy import transform_data
 import sys
 
 import psycopg2
@@ -61,8 +61,8 @@ def create_table(cursor):
         sql = '''CREATE TABLE energy(
         year INT NOT NULL, 
         month INT NOT NULL, 
+        state VARCHAR NOT NULL, 
         generated FLOAT NOT NULL
-        
         )'''
         # Creating a table
         cursor.execute(sql);
@@ -101,25 +101,21 @@ copy_from_dataFile_StringIO(conn, edf, 'energy')
 
 
 def query_data():
-    start = timer()
 
     conn.autocommit = True
     cursor = conn.cursor()
   
-    sql = '''SELECT YEAR, (SUM(generated))
+    sql = '''SELECT year, month, state, (SUM(generated)) as sums
             FROM energy 
             WHERE YEAR != 2022
-            Group By YEAR
-            Order By YEAR DESC
+            Group By YEAR, state, month
+            Order By YEAR ASC, month ASC, sums DESC
                 ;''' 
   
     cursor.execute(sql)
     results = cursor.fetchall()
-    df = pd.DataFrame (results, columns = ['Year', 'Total Generated(MWh)'])
-    #fig = px.line(df, x="Year", y="Total Generated(in millions)", title="TOTAL Energy Generated Each Year")
+    df = pd.DataFrame (results, columns = ['Year', 'Month', 'State','Total Generated(MWh)'])
+    #fig = px.bar(df, x="Year", y="Total Generated(in millions)", color = "State", title="TOTAL Energy Generated Each Year")
     conn.commit()
-    end = timer()
-    k = end - start 
-    #print("Query execution time: {}s".format(k))
     #fig.show()
     return df
