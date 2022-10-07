@@ -22,7 +22,7 @@ There was a fast increase in energy generation from 2001 to 2007. The average en
 
 Since 2001, Texas leads the chart on energy generation by far. There are a few states that are still high producers but most states don't generate a lot of energy. 
 
-## Analysis #3: Energy by Producer
+### Analysis #3: Energy by Producer
 
 Electric Generators, both Independent Power Producers and Electric Utilities are the greatest producers of renewable energy. These two producers also exhibited the greatest change over time in total renewable energy production. 
 
@@ -38,7 +38,7 @@ There is a big decline in the use of coal for energy generation from 2001 to 202
 
 Natural gases and coal are especially generated in the summer time. Summer and winter have the most energy produced overall. 
 
-## Conclusion
+### Conclusion
 
 Most energy is still being produced from non renewable sources, but there is an increase in renewable energy. Renewables are time based like wind and solar. These are difficult to store, making the grid harder to use them. We can do automation for the grid to get cleanest resource with good demand. Estimates say Texas emissions could decrease by 20% by coordinating with what devices need power (like electric cars, heaters, etc). This could save 6 million tons of carbon dioxide from being released.
 
