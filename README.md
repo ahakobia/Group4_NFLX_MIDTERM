@@ -16,7 +16,7 @@ The questions that our team will answer are:
 
 ---
 
-# Analysis #1: Total Energy Generated From 2001 - 2021
+## Analysis #1: Total Energy Generated From 2001 - 2021
 
 There was a fast increase in energy generation from 2001 to 2007. The average energy generated from 2001 to 2022 was about 4.05 billion MWH. Energy generation decreased under the average in 2009, which was during the financial crisis. It also decreased in 2020 during the COVID-19 pandemic.
 
