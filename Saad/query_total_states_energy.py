@@ -1,5 +1,5 @@
 
-from tran_total_states_energy import transform_data
+from tran_total_states_energy import (transform_data, transform_data2)
 import sys
 
 import psycopg2
@@ -13,6 +13,7 @@ import numpy as np
 from timeit import default_timer as timer
 
 edf = transform_data()
+edf2 = transform_data2()
 
 params_dic = {
     "host"      : "localhost",
@@ -58,20 +59,45 @@ def create_table(cursor):
         # 
         cursor.execute("DROP TABLE IF EXISTS energy;")
         sql = '''CREATE TABLE energy(
-        IDs INT NOT NULL,
+        id INT NOT NULL,
         year INT NOT NULL,
         month INT NOT NULL,
         state VARCHAR NOT NULL, 
         producer VARCHAR NOT NULL,
+        season VARCHAR NOT NULL,
         source VARCHAR NOT NULL, 
         generated FLOAT NOT NULL,
-        season VARCHAR NOT NULL,
         CONSTRAINT pk_energy PRIMARY KEY (
-        IDs)
+        id)
         )'''
         # Creating a table
         cursor.execute(sql);
         print("energy table is created successfully...............")  
+    except OperationalError as err:
+        # pass exception to function
+        show_psycopg2_exception(err)
+        # set the connection to 'None' in case of error
+        conn = None
+        
+def create_table2(cursor):
+    try:
+        # 
+        cursor.execute("DROP TABLE IF EXISTS energy_renew;")
+        sql = '''CREATE TABLE energy_renew(
+        ids INT NOT NULL,
+        year INT NOT NULL,
+        month INT NOT NULL,
+        state VARCHAR NOT NULL, 
+        producer VARCHAR NOT NULL,
+        season VARCHAR NOT NULL,
+        source VARCHAR NOT NULL, 
+        generated FLOAT NOT NULL,
+        CONSTRAINT pk_energy_renew PRIMARY KEY (
+        ids)
+        )'''
+        # Creating a table
+        cursor.execute(sql);
+        print("energy table 2 is created successfully...............")  
     except OperationalError as err:
         # pass exception to function
         show_psycopg2_exception(err)
@@ -100,9 +126,12 @@ conn = connect(params_dic)
 # We set autocommit=True so every command we execute will produce results immediately.
 conn.autocommit = True
 cursor = conn.cursor()
-create_table(cursor)
 
+create_table(cursor)
 copy_from_dataFile_StringIO(conn, edf, 'energy')
+
+create_table2(cursor)
+copy_from_dataFile_StringIO(conn, edf2, 'energy_renew')
 
 
 def query_data():
@@ -110,13 +139,29 @@ def query_data():
     conn.autocommit = True
     cursor = conn.cursor()
   
-    sql = '''SELECT source, generated, season
-            FROM energy 
-            GROUP BY source, generated, season
+    sql = '''SELECT source, season, SUM(generated)
+            FROM energy
+            GROUP BY source, season
                 ;''' 
   
     cursor.execute(sql)
     results = cursor.fetchall()
-    df = pd.DataFrame (results, columns = ['Source','Total Generated(MWh)', 'Season'])
+    df = pd.DataFrame (results, columns = ['Season', 'Source', 'Total Generated(MWh)'])
+    conn.commit()
+    return df
+
+def query_data2():
+
+    conn.autocommit = True
+    cursor = conn.cursor()
+  
+    sql = '''SELECT source, season, SUM(generated)
+            FROM energy_renew
+            GROUP BY source, season
+                ;''' 
+  
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    df = pd.DataFrame (results, columns = ['Season', 'Source', 'Total Generated(MWh)'])
     conn.commit()
     return df
